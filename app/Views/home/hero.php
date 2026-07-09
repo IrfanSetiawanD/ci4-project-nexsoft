@@ -1,68 +1,121 @@
-<!-- Hero Section -->
-<section id="home"
-  class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+<!-- ========================================= -->
+<!-- Navbar -->
+<!-- ========================================= -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
 
-  <!-- Background Decoration -->
-  <div
-    class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-200 rounded-full blur-3xl opacity-30"></div>
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
-  <div
-    class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-200 rounded-full blur-3xl opacity-30"></div>
+    <div class="flex items-center justify-between h-20">
 
-  <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3">
 
-    <div class="grid lg:grid-cols-2 gap-16 items-center min-h-screen py-28">
+        <div class="w-10 h-10 rounded-xl bg-indigo-700 flex items-center justify-center">
 
-      <!-- Left Content -->
-      <div>
-
-        <!-- Badge -->
-        <div
-          class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-
-          <i class="fa-solid fa-circle-check"></i>
-
-          Authorized Software Solution Provider
+          <i class="fa-solid fa-cube text-white"></i>
 
         </div>
 
-        <!-- Heading -->
-        <h1
-          class="text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">
+        <span class="text-xl font-bold text-gray-900">
+          NexSoft Commerce
+        </span>
 
-          Empower Your Business with
+      </a>
+
+      <!-- Menu -->
+      <nav class="hidden lg:flex items-center gap-8">
+
+        <a href="/" class="font-medium text-gray-700 hover:text-indigo-700">
+          Home
+        </a>
+
+        <a href="/products" class="font-medium text-gray-700 hover:text-indigo-700">
+          Products
+        </a>
+
+        <a href="/services" class="font-medium text-gray-700 hover:text-indigo-700">
+          Services
+        </a>
+
+        <a href="/blogs" class="font-medium text-gray-700 hover:text-indigo-700">
+          Blog
+        </a>
+
+        <a href="/about" class="font-medium text-gray-700 hover:text-indigo-700">
+          About
+        </a>
+
+      </nav>
+
+      <!-- Button -->
+      <a href="/contact"
+        class="hidden lg:inline-flex bg-indigo-700 hover:bg-indigo-800 text-white px-5 py-3 rounded-xl font-semibold">
+
+        Free Consultation
+
+      </a>
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- ========================================= -->
+<!-- Hero Section -->
+<!-- ========================================= -->
+<section id="home"
+  class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-cyan-50 pt-24">
+
+  <!-- Background Blur -->
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-300 rounded-full blur-3xl opacity-30"></div>
+
+  <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-200 rounded-full blur-3xl opacity-30"></div>
+
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+    <div class="grid lg:grid-cols-2 gap-16 items-center min-h-[90vh]">
+
+      <!-- Left -->
+      <div>
+
+        <span
+          class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+
+          <i class="fa-solid fa-circle-check"></i>
+          Authorized Software Licensing Partner
+
+        </span>
+
+        <h1 class="text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900">
+
+          Digital Software Solutions For
 
           <span class="text-indigo-700">
-            Original Software
+            Modern Businesses
           </span>
-
-          Solutions
 
         </h1>
 
-        <!-- Description -->
-        <p
-          class="mt-8 text-lg leading-8 text-gray-600">
+        <p class="mt-8 text-lg leading-8 text-gray-600">
 
-          NexSoft Commerce menyediakan berbagai lisensi software original,
-          solusi cloud, keamanan siber, aplikasi produktivitas,
-          hingga software desain untuk membantu perusahaan
-          meningkatkan produktivitas dan transformasi digital.
+          NexSoft Commerce membantu perusahaan mendapatkan lisensi software original,
+          cloud solutions, cybersecurity, productivity tools,
+          dan software engineering untuk mendukung transformasi digital.
 
         </p>
 
-        <!-- Button -->
-        <div class="mt-10 flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-4 mt-10">
 
-          <a href="#products"
-            class="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-4 rounded-xl font-semibold transition duration-300">
+          <a href="/products"
+            class="bg-indigo-700 hover:bg-indigo-800 text-white px-8 py-4 rounded-xl font-semibold">
 
             Explore Products
 
           </a>
 
-          <a href="#contact"
-            class="border border-indigo-700 text-indigo-700 hover:bg-indigo-700 hover:text-white px-8 py-4 rounded-xl font-semibold transition duration-300">
+          <a href="/contact"
+            class="border border-indigo-700 text-indigo-700 hover:bg-indigo-700 hover:text-white px-8 py-4 rounded-xl font-semibold">
 
             Contact Sales
 
@@ -70,174 +123,77 @@
 
         </div>
 
-        <!-- Statistics -->
-        <div
-          class="grid grid-cols-3 gap-8 mt-14">
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-8 mt-14">
 
           <div>
-
-            <h2 class="text-4xl font-bold text-indigo-700">
-              500+
-            </h2>
-
-            <p class="text-gray-500 mt-2">
-              Happy Clients
-            </p>
-
+            <h2 class="text-4xl font-bold text-indigo-700">500+</h2>
+            <p class="text-gray-500 mt-2">Clients</p>
           </div>
 
           <div>
-
-            <h2 class="text-4xl font-bold text-indigo-700">
-              20+
-            </h2>
-
-            <p class="text-gray-500 mt-2">
-              Global Principals
-            </p>
-
+            <h2 class="text-4xl font-bold text-indigo-700">30+</h2>
+            <p class="text-gray-500 mt-2">Software Brands</p>
           </div>
 
           <div>
-
-            <h2 class="text-4xl font-bold text-indigo-700">
-              24/7
-            </h2>
-
-            <p class="text-gray-500 mt-2">
-              Technical Support
-            </p>
-
+            <h2 class="text-4xl font-bold text-indigo-700">24/7</h2>
+            <p class="text-gray-500 mt-2">Support</p>
           </div>
 
         </div>
 
       </div>
 
-      <!-- Right Content -->
+      <!-- Right -->
       <div class="relative">
 
-        <!-- Main Card -->
-        <div
-          class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
 
-          <!-- Header -->
-          <div
-            class="bg-indigo-700 p-6 flex justify-between items-center">
+          <div class="bg-indigo-700 p-6">
 
-            <div>
-
-              <h3 class="text-white font-bold text-xl">
-                Software Portfolio
-              </h3>
-
-              <p class="text-indigo-100 text-sm">
-                Enterprise Digital Solutions
-              </p>
-
-            </div>
-
-            <i class="fa-solid fa-laptop-code text-white text-3xl"></i>
+            <h3 class="text-white text-xl font-bold">
+              Featured Software Solutions
+            </h3>
 
           </div>
 
-          <!-- Body -->
-          <div class="p-8 space-y-5">
+          <div class="p-6 space-y-4">
 
-            <div
-              class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
+            <div class="flex justify-between items-center p-4 rounded-xl bg-gray-50">
 
-              <div class="flex items-center gap-4">
-
-                <div
-                  class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-
-                  <i class="fa-brands fa-microsoft text-blue-600 text-xl"></i>
-
-                </div>
-
-                <div>
-
-                  <h4 class="font-semibold">
-                    Microsoft 365
-                  </h4>
-
-                  <p class="text-sm text-gray-500">
-                    Productivity
-                  </p>
-
-                </div>
-
+              <div>
+                <h4 class="font-semibold">Microsoft 365</h4>
+                <p class="text-sm text-gray-500">Business Productivity</p>
               </div>
 
-              <span
-                class="text-green-600 font-semibold">
+              <span class="text-green-600 font-semibold">
                 Ready
               </span>
 
             </div>
 
-            <div
-              class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
+            <div class="flex justify-between items-center p-4 rounded-xl bg-gray-50">
 
-              <div class="flex items-center gap-4">
-
-                <div
-                  class="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
-
-                  <i class="fa-solid fa-file-pdf text-red-500"></i>
-
-                </div>
-
-                <div>
-
-                  <h4 class="font-semibold">
-                    Adobe Acrobat
-                  </h4>
-
-                  <p class="text-sm text-gray-500">
-                    PDF Solution
-                  </p>
-
-                </div>
-
+              <div>
+                <h4 class="font-semibold">Adobe Creative Cloud</h4>
+                <p class="text-sm text-gray-500">Design Solution</p>
               </div>
 
-              <span
-                class="text-green-600 font-semibold">
+              <span class="text-green-600 font-semibold">
                 Available
               </span>
 
             </div>
 
-            <div
-              class="flex items-center justify-between bg-gray-50 p-4 rounded-xl">
+            <div class="flex justify-between items-center p-4 rounded-xl bg-gray-50">
 
-              <div class="flex items-center gap-4">
-
-                <div
-                  class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-
-                  <i class="fa-solid fa-shield-halved text-emerald-600"></i>
-
-                </div>
-
-                <div>
-
-                  <h4 class="font-semibold">
-                    Security Software
-                  </h4>
-
-                  <p class="text-sm text-gray-500">
-                    Endpoint Protection
-                  </p>
-
-                </div>
-
+              <div>
+                <h4 class="font-semibold">Bitdefender GravityZone</h4>
+                <p class="text-sm text-gray-500">Cyber Security</p>
               </div>
 
-              <span
-                class="text-green-600 font-semibold">
+              <span class="text-green-600 font-semibold">
                 Ready
               </span>
 
@@ -247,19 +203,13 @@
 
         </div>
 
-        <!-- Floating Card -->
+        <!-- Floating Badge -->
         <div
-          class="hidden lg:block absolute -left-12 bottom-12 bg-white rounded-2xl shadow-xl p-5 border border-gray-100">
+          class="hidden lg:block absolute -left-10 bottom-10 bg-white px-5 py-4 rounded-2xl shadow-lg">
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
 
-            <div
-              class="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center">
-
-              <i
-                class="fa-solid fa-headset text-green-600 text-xl"></i>
-
-            </div>
+            <i class="fa-solid fa-headset text-green-600 text-xl"></i>
 
             <div>
 
@@ -268,7 +218,7 @@
               </h4>
 
               <p class="text-sm text-gray-500">
-                Talk with our experts
+                Software Experts
               </p>
 
             </div>
@@ -277,19 +227,12 @@
 
         </div>
 
-        <!-- Floating Card -->
         <div
-          class="hidden lg:block absolute -right-10 top-16 bg-white rounded-2xl shadow-xl p-5 border border-gray-100">
+          class="hidden lg:block absolute -right-10 top-12 bg-white px-5 py-4 rounded-2xl shadow-lg">
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3">
 
-            <div
-              class="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center">
-
-              <i
-                class="fa-solid fa-award text-indigo-700 text-xl"></i>
-
-            </div>
+            <i class="fa-solid fa-award text-indigo-700 text-xl"></i>
 
             <div>
 

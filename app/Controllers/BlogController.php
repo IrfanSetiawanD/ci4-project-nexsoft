@@ -5,116 +5,118 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\BlogModel;
 use App\Models\BlogCategoryModel;
+use App\Models\SettingModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class BlogController extends BaseController
 {
     protected $blogModel;
     protected $blogCategoryModel;
+    protected $settingModel;
 
     public function __construct()
     {
         $this->blogModel = new BlogModel();
         $this->blogCategoryModel = new BlogCategoryModel();
+        $this->settingModel = new SettingModel();
     }
 
     /**
-     * Menampilkan semua blog
+     * Blog List
      */
     public function index()
     {
-        $data['blogs'] = $this->blogModel
-            ->select('blogs.*, blog_categories.name AS category_name')
+        $setting = $this->settingModel->first();
+
+        $blogs = $this->blogModel
+            ->select("
+                blogs.*,
+                blog_categories.name AS category_name,
+                blog_categories.slug AS category_slug
+            ")
             ->join('blog_categories', 'blog_categories.id = blogs.blog_category_id')
-            ->orderBy('blogs.created_at', 'DESC')
+            ->where('blogs.status', 'published')
+            ->orderBy('blogs.published_at', 'DESC')
             ->findAll();
 
-        return view('admin/blogs/index', $data);
-    }
-
-    /**
-     * Form tambah blog
-     */
-    public function create()
-    {
-        $data['categories'] = $this->blogCategoryModel
-            ->where('status', 'active')
-            ->orderBy('name', 'ASC')
-            ->findAll();
-
-        return view('admin/blogs/create', $data);
-    }
-
-    /**
-     * Simpan blog
-     */
-    public function store()
-    {
-        $this->blogModel->save([
-            'blog_category_id' => $this->request->getPost('blog_category_id'),
-            'title'            => $this->request->getPost('title'),
-            'slug'             => url_title($this->request->getPost('title'), '-', true),
-            'excerpt'          => $this->request->getPost('excerpt'),
-            'content'          => $this->request->getPost('content'),
-            'featured_image'   => $this->request->getPost('featured_image'),
-            'author'           => $this->request->getPost('author'),
-            'is_featured'      => $this->request->getPost('is_featured') ? 1 : 0,
-            'status'           => $this->request->getPost('status'),
-            'published_at'     => $this->request->getPost('published_at'),
+        return view('pages/blog', [
+            'title'            => 'Blog',
+            'meta_description' => $setting['meta_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'blogs'            => $blogs,
         ]);
-
-        return redirect()->to('/admin/blogs')
-            ->with('success', 'Artikel berhasil ditambahkan.');
     }
 
     /**
-     * Form edit blog
+     * Blog Detail
      */
-    public function edit($id)
+    public function show($slug)
     {
-        $data['blog'] = $this->blogModel->find($id);
+        $setting = $this->settingModel->first();
 
-        if (!$data['blog']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        $blog = $this->blogModel
+            ->select("
+                blogs.*,
+                blog_categories.name AS category_name,
+                blog_categories.slug AS category_slug
+            ")
+            ->join('blog_categories', 'blog_categories.id = blogs.blog_category_id')
+            ->where('blogs.slug', $slug)
+            ->where('blogs.status', 'published')
+            ->first();
+
+        if (!$blog) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        $data['categories'] = $this->blogCategoryModel
-            ->where('status', 'active')
-            ->orderBy('name', 'ASC')
+        $relatedBlogs = $this->blogModel
+            ->where('blog_category_id', $blog['blog_category_id'])
+            ->where('id !=', $blog['id'])
+            ->where('status', 'published')
+            ->orderBy('published_at', 'DESC')
+            ->limit(3)
             ->findAll();
 
-        return view('admin/blogs/edit', $data);
-    }
-
-    /**
-     * Update blog
-     */
-    public function update($id)
-    {
-        $this->blogModel->update($id, [
-            'blog_category_id' => $this->request->getPost('blog_category_id'),
-            'title'            => $this->request->getPost('title'),
-            'slug'             => url_title($this->request->getPost('title'), '-', true),
-            'excerpt'          => $this->request->getPost('excerpt'),
-            'content'          => $this->request->getPost('content'),
-            'featured_image'   => $this->request->getPost('featured_image'),
-            'author'           => $this->request->getPost('author'),
-            'is_featured'      => $this->request->getPost('is_featured') ? 1 : 0,
-            'status'           => $this->request->getPost('status'),
-            'published_at'     => $this->request->getPost('published_at'),
+        return view('pages/blog-detail', [
+            'title'            => $blog['title'],
+            'meta_description' => $blog['excerpt'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'blog'             => $blog,
+            'relatedBlogs'     => $relatedBlogs,
         ]);
-
-        return redirect()->to('/admin/blogs')
-            ->with('success', 'Artikel berhasil diperbarui.');
     }
 
     /**
-     * Hapus blog
+     * Blog by Category
      */
-    public function delete($id)
+    public function category($slug)
     {
-        $this->blogModel->delete($id);
+        $setting = $this->settingModel->first();
 
-        return redirect()->to('/admin/blogs')
-            ->with('success', 'Artikel berhasil dihapus.');
+        $category = $this->blogCategoryModel
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$category) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
+        $blogs = $this->blogModel
+            ->where('blog_category_id', $category['id'])
+            ->where('status', 'published')
+            ->orderBy('published_at', 'DESC')
+            ->findAll();
+
+        return view('pages/blog', [
+            'title'            => $category['name'],
+            'meta_description' => $setting['meta_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'category'         => $category,
+            'blogs'            => $blogs,
+        ]);
     }
 }

@@ -3,11 +3,13 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\ProductModel;
-use App\Models\CategoryModel;
 use App\Models\BrandModel;
+use App\Models\CategoryModel;
 use App\Models\LicenseTypeModel;
 use App\Models\PrincipalModel;
+use App\Models\ProductModel;
+use App\Models\SettingModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class ProductController extends BaseController
 {
@@ -16,6 +18,7 @@ class ProductController extends BaseController
     protected $brandModel;
     protected $licenseTypeModel;
     protected $principalModel;
+    protected $settingModel;
 
     public function __construct()
     {
@@ -24,125 +27,127 @@ class ProductController extends BaseController
         $this->brandModel        = new BrandModel();
         $this->licenseTypeModel  = new LicenseTypeModel();
         $this->principalModel    = new PrincipalModel();
+        $this->settingModel      = new SettingModel();
     }
 
     /**
-     * List Product
+     * Product List
      */
     public function index()
     {
-        $data['products'] = $this->productModel
-            ->select('
+        $setting = $this->settingModel->first();
+
+        $products = $this->productModel
+            ->select("
+                products.*,
+                categories.name AS category_name,
+                brands.name AS brand_name,
+                principals.name AS principal_name
+            ")
+            ->join('categories', 'categories.id = products.category_id')
+            ->join('brands', 'brands.id = products.brand_id')
+            ->join('principals', 'principals.id = products.principal_id')
+            ->where('products.status', 'active')
+            ->orderBy('products.is_featured', 'DESC')
+            ->orderBy('products.name', 'ASC')
+            ->findAll();
+
+        return view('pages/products', [
+            'title'            => 'Products',
+            'meta_description' => $setting['meta_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+
+            'categories'       => $this->categoryModel
+                ->where('status', 'active')
+                ->orderBy('name', 'ASC')
+                ->findAll(),
+
+            'products'         => $products,
+        ]);
+    }
+
+    /**
+     * Product Detail
+     */
+    public function show($slug)
+    {
+        $setting = $this->settingModel->first();
+
+        $product = $this->productModel
+            ->select("
                 products.*,
                 categories.name AS category_name,
                 brands.name AS brand_name,
                 license_types.name AS license_type_name,
                 principals.name AS principal_name
-            ')
+            ")
             ->join('categories', 'categories.id = products.category_id')
             ->join('brands', 'brands.id = products.brand_id')
             ->join('license_types', 'license_types.id = products.license_type_id')
             ->join('principals', 'principals.id = products.principal_id')
-            ->orderBy('products.id', 'DESC')
-            ->findAll();
+            ->where('products.slug', $slug)
+            ->where('products.status', 'active')
+            ->first();
 
-        return view('admin/products/index', $data);
-    }
-
-    /**
-     * Form Tambah Product
-     */
-    public function create()
-    {
-        $data = [
-            'categories'    => $this->categoryModel->findAll(),
-            'brands'        => $this->brandModel->findAll(),
-            'licenseTypes'  => $this->licenseTypeModel->findAll(),
-            'principals'    => $this->principalModel->findAll(),
-        ];
-
-        return view('admin/products/create', $data);
-    }
-
-    /**
-     * Simpan Product
-     */
-    public function store()
-    {
-        $this->productModel->save([
-            'category_id'        => $this->request->getPost('category_id'),
-            'brand_id'           => $this->request->getPost('brand_id'),
-            'license_type_id'    => $this->request->getPost('license_type_id'),
-            'principal_id'       => $this->request->getPost('principal_id'),
-            'name'               => $this->request->getPost('name'),
-            'slug'               => url_title($this->request->getPost('name'), '-', true),
-            'sku'                => $this->request->getPost('sku'),
-            'short_description'  => $this->request->getPost('short_description'),
-            'description'        => $this->request->getPost('description'),
-            'price'              => $this->request->getPost('price'),
-            'image'              => null,
-            'stock_status'       => $this->request->getPost('stock_status'),
-            'status'             => $this->request->getPost('status'),
-            'is_featured'        => $this->request->getPost('is_featured') ? 1 : 0,
-        ]);
-
-        return redirect()->to('/admin/products')
-            ->with('success', 'Product berhasil ditambahkan.');
-    }
-
-    /**
-     * Form Edit
-     */
-    public function edit($id)
-    {
-        $data = [
-            'product'       => $this->productModel->find($id),
-            'categories'    => $this->categoryModel->findAll(),
-            'brands'        => $this->brandModel->findAll(),
-            'licenseTypes'  => $this->licenseTypeModel->findAll(),
-            'principals'    => $this->principalModel->findAll(),
-        ];
-
-        if (!$data['product']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$product) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/products/edit', $data);
-    }
+        $relatedProducts = $this->productModel
+            ->where('category_id', $product['category_id'])
+            ->where('id !=', $product['id'])
+            ->where('status', 'active')
+            ->orderBy('is_featured', 'DESC')
+            ->orderBy('name', 'ASC')
+            ->limit(4)
+            ->findAll();
 
-    /**
-     * Update Product
-     */
-    public function update($id)
-    {
-        $this->productModel->update($id, [
-            'category_id'        => $this->request->getPost('category_id'),
-            'brand_id'           => $this->request->getPost('brand_id'),
-            'license_type_id'    => $this->request->getPost('license_type_id'),
-            'principal_id'       => $this->request->getPost('principal_id'),
-            'name'               => $this->request->getPost('name'),
-            'slug'               => url_title($this->request->getPost('name'), '-', true),
-            'sku'                => $this->request->getPost('sku'),
-            'short_description'  => $this->request->getPost('short_description'),
-            'description'        => $this->request->getPost('description'),
-            'price'              => $this->request->getPost('price'),
-            'stock_status'       => $this->request->getPost('stock_status'),
-            'status'             => $this->request->getPost('status'),
-            'is_featured'        => $this->request->getPost('is_featured') ? 1 : 0,
+        return view('pages/product-detail', [
+            'title'            => $product['name'],
+            'meta_description' => $product['short_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'product'          => $product,
+            'relatedProducts'  => $relatedProducts,
         ]);
-
-        return redirect()->to('/admin/products')
-            ->with('success', 'Product berhasil diperbarui.');
     }
 
     /**
-     * Hapus Product
+     * Products by Category
      */
-    public function delete($id)
+    public function category($slug)
     {
-        $this->productModel->delete($id);
+        $setting = $this->settingModel->first();
 
-        return redirect()->to('/admin/products')
-            ->with('success', 'Product berhasil dihapus.');
+        $category = $this->categoryModel
+            ->where('slug', $slug)
+            ->first();
+
+        if (!$category) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
+        $products = $this->productModel
+            ->where('category_id', $category['id'])
+            ->where('status', 'active')
+            ->orderBy('is_featured', 'DESC')
+            ->orderBy('name', 'ASC')
+            ->findAll();
+
+        return view('pages/products', [
+            'title'            => $category['name'],
+            'meta_description' => $setting['meta_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+
+            'categories'       => $this->categoryModel
+                ->where('status', 'active')
+                ->orderBy('name', 'ASC')
+                ->findAll(),
+
+            'category'         => $category,
+            'products'         => $products,
+        ]);
     }
 }

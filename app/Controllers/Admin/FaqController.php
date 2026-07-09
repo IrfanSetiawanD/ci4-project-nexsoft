@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\FaqModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class FaqController extends BaseController
 {
@@ -15,27 +16,32 @@ class FaqController extends BaseController
     }
 
     /**
-     * Menampilkan semua FAQ
+     * FAQ List
      */
     public function index()
     {
-        $data['faqs'] = $this->faqModel
+        $faqs = $this->faqModel
             ->orderBy('display_order', 'ASC')
             ->findAll();
 
-        return view('admin/faqs/index', $data);
+        return view('admin/faqs/index', [
+            'title' => 'Manage FAQ',
+            'faqs'  => $faqs,
+        ]);
     }
 
     /**
-     * Form tambah FAQ
+     * Create Form
      */
     public function create()
     {
-        return view('admin/faqs/create');
+        return view('admin/faqs/create', [
+            'title' => 'Create FAQ',
+        ]);
     }
 
     /**
-     * Simpan FAQ
+     * Store FAQ
      */
     public function store()
     {
@@ -51,17 +57,20 @@ class FaqController extends BaseController
     }
 
     /**
-     * Form edit FAQ
+     * Edit Form
      */
     public function edit($id)
     {
-        $data['faq'] = $this->faqModel->find($id);
+        $faq = $this->faqModel->find($id);
 
-        if (!$data['faq']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$faq) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/faqs/edit', $data);
+        return view('admin/faqs/edit', [
+            'title' => 'Edit FAQ',
+            'faq'   => $faq,
+        ]);
     }
 
     /**
@@ -81,7 +90,7 @@ class FaqController extends BaseController
     }
 
     /**
-     * Hapus FAQ
+     * Delete FAQ
      */
     public function delete($id)
     {

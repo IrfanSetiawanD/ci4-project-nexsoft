@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\SettingModel;
@@ -15,17 +15,18 @@ class SettingController extends BaseController
     }
 
     /**
-     * Menampilkan halaman pengaturan website
+     * Website Settings
      */
     public function index()
     {
-        $data['setting'] = $this->settingModel->first();
-
-        return view('admin/settings/index', $data);
+        return view('admin/settings/index', [
+            'title'   => 'Website Settings',
+            'setting' => $this->settingModel->first(),
+        ]);
     }
 
     /**
-     * Simpan atau update pengaturan website
+     * Save Website Settings
      */
     public function save()
     {

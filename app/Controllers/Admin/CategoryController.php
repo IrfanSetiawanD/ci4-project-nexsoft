@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\CategoryModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class CategoryController extends BaseController
 {
@@ -15,34 +16,32 @@ class CategoryController extends BaseController
     }
 
     /**
-     * Display all categories
+     * Category List
      */
     public function index()
     {
-        $data = [
-            'title'      => 'Categories',
-            'categories' => $this->categoryModel
-                ->orderBy('id', 'DESC')
-                ->findAll(),
-        ];
+        $categories = $this->categoryModel
+            ->orderBy('id', 'DESC')
+            ->findAll();
 
-        return view('admin/categories/index', $data);
+        return view('admin/categories/index', [
+            'title'      => 'Manage Categories',
+            'categories' => $categories,
+        ]);
     }
 
     /**
-     * Show create form
+     * Create Form
      */
     public function create()
     {
-        $data = [
-            'title' => 'Add Category',
-        ];
-
-        return view('admin/categories/create', $data);
+        return view('admin/categories/create', [
+            'title' => 'Create Category',
+        ]);
     }
 
     /**
-     * Store new category
+     * Store Category
      */
     public function store()
     {
@@ -51,7 +50,7 @@ class CategoryController extends BaseController
             'slug' => 'required|is_unique[categories.slug]',
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -66,37 +65,35 @@ class CategoryController extends BaseController
         ]);
 
         return redirect()->to('/admin/categories')
-            ->with('success', 'Category created successfully.');
+            ->with('success', 'Category berhasil ditambahkan.');
     }
 
     /**
-     * Show edit form
+     * Edit Form
      */
     public function edit($id)
     {
         $category = $this->categoryModel->find($id);
 
         if (!$category) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        $data = [
+        return view('admin/categories/edit', [
             'title'    => 'Edit Category',
             'category' => $category,
-        ];
-
-        return view('admin/categories/edit', $data);
+        ]);
     }
 
     /**
-     * Update category
+     * Update Category
      */
     public function update($id)
     {
         $category = $this->categoryModel->find($id);
 
         if (!$category) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $rules = [
@@ -104,7 +101,7 @@ class CategoryController extends BaseController
             'slug' => "required|is_unique[categories.slug,id,{$id}]",
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -119,23 +116,23 @@ class CategoryController extends BaseController
         ]);
 
         return redirect()->to('/admin/categories')
-            ->with('success', 'Category updated successfully.');
+            ->with('success', 'Category berhasil diperbarui.');
     }
 
     /**
-     * Delete category
+     * Delete Category
      */
     public function delete($id)
     {
         $category = $this->categoryModel->find($id);
 
         if (!$category) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $this->categoryModel->delete($id);
 
-        return redirect()->back()
-            ->with('success', 'Category deleted successfully.');
+        return redirect()->to('/admin/categories')
+            ->with('success', 'Category berhasil dihapus.');
     }
 }

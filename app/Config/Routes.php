@@ -6,20 +6,66 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// ======================================
-// Frontend
-// ======================================
+// ======================================================
+// FRONTEND
+// ======================================================
 
-$routes->get('/', 'Home::index');
+// Home
+$routes->get('/', 'HomeController::index');
 
-// ======================================
-// Admin
-// ======================================
+// About
+$routes->get('about', 'HomeController::about');
 
-$routes->group('admin', function ($routes) {
+// Search
+$routes->get('search', 'HomeController::search');
+
+// Products
+$routes->group('products', function ($routes) {
+  $routes->get('/', 'ProductController::index');
+  $routes->get('category/(:segment)', 'ProductController::category/$1');
+  $routes->get('(:segment)', 'ProductController::show/$1');
+});
+
+// Services
+$routes->group('services', function ($routes) {
+  $routes->get('/', 'ServiceController::index');
+  $routes->get('(:segment)', 'ServiceController::show/$1');
+});
+
+// Brands
+$routes->group('brands', function ($routes) {
+  $routes->get('/', 'BrandController::index');
+  $routes->get('(:segment)', 'BrandController::show/$1');
+});
+
+// Principals
+$routes->group('principals', function ($routes) {
+  $routes->get('/', 'PrincipalController::index');
+  $routes->get('(:segment)', 'PrincipalController::show/$1');
+});
+
+// Blog
+$routes->group('blog', function ($routes) {
+  $routes->get('/', 'BlogController::index');
+  $routes->get('category/(:segment)', 'BlogController::category/$1');
+  $routes->get('(:segment)', 'BlogController::show/$1');
+});
+
+// Contact
+$routes->group('contact', function ($routes) {
+  $routes->get('/', 'ContactController::index');
+  $routes->post('send', 'ContactController::send');
+});
+
+
+// ======================================================
+// ADMIN
+// ======================================================
+
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
 
   // Dashboard
-  $routes->get('/', 'DashboardController::index');
+  // $routes->get('/', 'DashboardController::index');
 
   // Categories
   $routes->group('categories', function ($routes) {

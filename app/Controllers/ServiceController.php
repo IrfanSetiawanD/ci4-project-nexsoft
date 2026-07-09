@@ -4,96 +4,71 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\ServiceModel;
+use App\Models\SettingModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class ServiceController extends BaseController
 {
     protected $serviceModel;
+    protected $settingModel;
 
     public function __construct()
     {
         $this->serviceModel = new ServiceModel();
+        $this->settingModel = new SettingModel();
     }
 
     /**
-     * Menampilkan semua service
+     * Service List
      */
     public function index()
     {
-        $data['services'] = $this->serviceModel
+        $setting = $this->settingModel->first();
+
+        $services = $this->serviceModel
+            ->where('status', 'active')
             ->orderBy('display_order', 'ASC')
             ->findAll();
 
-        return view('admin/services/index', $data);
-    }
-
-    /**
-     * Form tambah service
-     */
-    public function create()
-    {
-        return view('admin/services/create');
-    }
-
-    /**
-     * Simpan service
-     */
-    public function store()
-    {
-        $this->serviceModel->save([
-            'title'             => $this->request->getPost('title'),
-            'slug'              => url_title($this->request->getPost('title'), '-', true),
-            'icon'              => $this->request->getPost('icon'),
-            'short_description' => $this->request->getPost('short_description'),
-            'description'       => $this->request->getPost('description'),
-            'display_order'     => $this->request->getPost('display_order'),
-            'status'            => $this->request->getPost('status'),
+        return view('pages/services', [
+            'title'            => 'Services',
+            'meta_description' => $setting['meta_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'services'         => $services,
         ]);
-
-        return redirect()->to('/admin/services')
-            ->with('success', 'Service berhasil ditambahkan.');
     }
 
     /**
-     * Form edit service
+     * Service Detail
      */
-    public function edit($id)
+    public function show($slug)
     {
-        $data['service'] = $this->serviceModel->find($id);
+        $setting = $this->settingModel->first();
 
-        if (!$data['service']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        $service = $this->serviceModel
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->first();
+
+        if (! $service) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/services/edit', $data);
-    }
+        $relatedServices = $this->serviceModel
+            ->where('status', 'active')
+            ->where('id !=', $service['id'])
+            ->orderBy('display_order', 'ASC')
+            ->limit(4)
+            ->findAll();
 
-    /**
-     * Update service
-     */
-    public function update($id)
-    {
-        $this->serviceModel->update($id, [
-            'title'             => $this->request->getPost('title'),
-            'slug'              => url_title($this->request->getPost('title'), '-', true),
-            'icon'              => $this->request->getPost('icon'),
-            'short_description' => $this->request->getPost('short_description'),
-            'description'       => $this->request->getPost('description'),
-            'display_order'     => $this->request->getPost('display_order'),
-            'status'            => $this->request->getPost('status'),
+        return view('pages/service-detail', [
+            'title'            => $service['title'],
+            'meta_description' => $service['short_description'] ?? '',
+            'meta_keywords'    => $setting['meta_keywords'] ?? '',
+            'setting'          => $setting,
+            'service'          => $service,
+            'relatedServices'  => $relatedServices,
         ]);
-
-        return redirect()->to('/admin/services')
-            ->with('success', 'Service berhasil diperbarui.');
-    }
-
-    /**
-     * Hapus service
-     */
-    public function delete($id)
-    {
-        $this->serviceModel->delete($id);
-
-        return redirect()->to('/admin/services')
-            ->with('success', 'Service berhasil dihapus.');
     }
 }

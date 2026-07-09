@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\TestimonialModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class TestimonialController extends BaseController
 {
@@ -15,27 +16,30 @@ class TestimonialController extends BaseController
     }
 
     /**
-     * Menampilkan semua testimonial
+     * Display all testimonials
      */
     public function index()
     {
-        $data['testimonials'] = $this->testimonialModel
-            ->orderBy('id', 'DESC')
-            ->findAll();
-
-        return view('admin/testimonials/index', $data);
+        return view('admin/testimonials/index', [
+            'title'        => 'Manage Testimonials',
+            'testimonials' => $this->testimonialModel
+                ->orderBy('id', 'DESC')
+                ->findAll(),
+        ]);
     }
 
     /**
-     * Form tambah testimonial
+     * Show create form
      */
     public function create()
     {
-        return view('admin/testimonials/create');
+        return view('admin/testimonials/create', [
+            'title' => 'Create Testimonial',
+        ]);
     }
 
     /**
-     * Simpan testimonial
+     * Store testimonial
      */
     public function store()
     {
@@ -54,17 +58,20 @@ class TestimonialController extends BaseController
     }
 
     /**
-     * Form edit testimonial
+     * Show edit form
      */
     public function edit($id)
     {
-        $data['testimonial'] = $this->testimonialModel->find($id);
+        $testimonial = $this->testimonialModel->find($id);
 
-        if (!$data['testimonial']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$testimonial) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/testimonials/edit', $data);
+        return view('admin/testimonials/edit', [
+            'title'       => 'Edit Testimonial',
+            'testimonial' => $testimonial,
+        ]);
     }
 
     /**
@@ -72,6 +79,12 @@ class TestimonialController extends BaseController
      */
     public function update($id)
     {
+        $testimonial = $this->testimonialModel->find($id);
+
+        if (!$testimonial) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->testimonialModel->update($id, [
             'client_name' => $this->request->getPost('client_name'),
             'company'     => $this->request->getPost('company'),
@@ -87,10 +100,16 @@ class TestimonialController extends BaseController
     }
 
     /**
-     * Hapus testimonial
+     * Delete testimonial
      */
     public function delete($id)
     {
+        $testimonial = $this->testimonialModel->find($id);
+
+        if (!$testimonial) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->testimonialModel->delete($id);
 
         return redirect()->to('/admin/testimonials')

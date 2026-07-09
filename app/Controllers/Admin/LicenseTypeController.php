@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\LicenseTypeModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class LicenseTypeController extends BaseController
 {
@@ -15,32 +16,32 @@ class LicenseTypeController extends BaseController
     }
 
     /**
-     * Display all license types
+     * License Type List
      */
     public function index()
     {
-        $data = [
-            'title' => 'License Types',
-            'licenseTypes' => $this->licenseTypeModel
-                ->orderBy('id', 'DESC')
-                ->findAll(),
-        ];
+        $licenseTypes = $this->licenseTypeModel
+            ->orderBy('id', 'DESC')
+            ->findAll();
 
-        return view('admin/license_types/index', $data);
-    }
-
-    /**
-     * Show create form
-     */
-    public function create()
-    {
-        return view('admin/license_types/create', [
-            'title' => 'Add License Type',
+        return view('admin/license_types/index', [
+            'title'        => 'Manage License Types',
+            'licenseTypes' => $licenseTypes,
         ]);
     }
 
     /**
-     * Store new license type
+     * Create Form
+     */
+    public function create()
+    {
+        return view('admin/license_types/create', [
+            'title' => 'Create License Type',
+        ]);
+    }
+
+    /**
+     * Store License Type
      */
     public function store()
     {
@@ -48,7 +49,7 @@ class LicenseTypeController extends BaseController
             'name' => 'required|min_length[2]|max_length[100]',
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -61,42 +62,42 @@ class LicenseTypeController extends BaseController
         ]);
 
         return redirect()->to('/admin/license-types')
-            ->with('success', 'License type created successfully.');
+            ->with('success', 'License Type berhasil ditambahkan.');
     }
 
     /**
-     * Show edit form
+     * Edit Form
      */
     public function edit($id)
     {
         $licenseType = $this->licenseTypeModel->find($id);
 
-        if (! $licenseType) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$licenseType) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
         return view('admin/license_types/edit', [
-            'title' => 'Edit License Type',
+            'title'       => 'Edit License Type',
             'licenseType' => $licenseType,
         ]);
     }
 
     /**
-     * Update license type
+     * Update License Type
      */
     public function update($id)
     {
         $licenseType = $this->licenseTypeModel->find($id);
 
-        if (! $licenseType) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$licenseType) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $rules = [
             'name' => 'required|min_length[2]|max_length[100]',
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -109,23 +110,23 @@ class LicenseTypeController extends BaseController
         ]);
 
         return redirect()->to('/admin/license-types')
-            ->with('success', 'License type updated successfully.');
+            ->with('success', 'License Type berhasil diperbarui.');
     }
 
     /**
-     * Delete license type
+     * Delete License Type
      */
     public function delete($id)
     {
         $licenseType = $this->licenseTypeModel->find($id);
 
-        if (! $licenseType) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$licenseType) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $this->licenseTypeModel->delete($id);
 
-        return redirect()->back()
-            ->with('success', 'License type deleted successfully.');
+        return redirect()->to('/admin/license-types')
+            ->with('success', 'License Type berhasil dihapus.');
     }
 }

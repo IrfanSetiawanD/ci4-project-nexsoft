@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\ProductImageModel;
 use App\Models\ProductModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class ProductImageController extends BaseController
 {
@@ -18,33 +19,44 @@ class ProductImageController extends BaseController
     }
 
     /**
-     * Menampilkan semua gambar produk
+     * Product Image List
      */
     public function index()
     {
-        $data['images'] = $this->productImageModel
-            ->select('product_images.*, products.name AS product_name')
+        $images = $this->productImageModel
+            ->select("
+                product_images.*,
+                products.name AS product_name
+            ")
             ->join('products', 'products.id = product_images.product_id')
+            ->orderBy('products.name', 'ASC')
             ->orderBy('product_images.sort_order', 'ASC')
             ->findAll();
 
-        return view('admin/product_images/index', $data);
+        return view('admin/product_images/index', [
+            'title'  => 'Manage Product Images',
+            'images' => $images,
+        ]);
     }
 
     /**
-     * Form tambah gambar produk
+     * Create Form
      */
     public function create()
     {
-        $data['products'] = $this->productModel
+        $products = $this->productModel
+            ->where('status', 'active')
             ->orderBy('name', 'ASC')
             ->findAll();
 
-        return view('admin/product_images/create', $data);
+        return view('admin/product_images/create', [
+            'title'    => 'Add Product Image',
+            'products' => $products,
+        ]);
     }
 
     /**
-     * Simpan gambar produk
+     * Store Product Image
      */
     public function store()
     {
@@ -57,33 +69,43 @@ class ProductImageController extends BaseController
         ]);
 
         return redirect()->to('/admin/product-images')
-            ->with('success', 'Gambar produk berhasil ditambahkan.');
+            ->with('success', 'Product image berhasil ditambahkan.');
     }
 
     /**
-     * Form edit gambar produk
+     * Edit Form
      */
     public function edit($id)
     {
-        $data = [
-            'image' => $this->productImageModel->find($id),
-            'products' => $this->productModel
-                ->orderBy('name', 'ASC')
-                ->findAll(),
-        ];
+        $image = $this->productImageModel->find($id);
 
-        if (!$data['image']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$image) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/product_images/edit', $data);
+        $products = $this->productModel
+            ->where('status', 'active')
+            ->orderBy('name', 'ASC')
+            ->findAll();
+
+        return view('admin/product_images/edit', [
+            'title'    => 'Edit Product Image',
+            'image'    => $image,
+            'products' => $products,
+        ]);
     }
 
     /**
-     * Update gambar produk
+     * Update Product Image
      */
     public function update($id)
     {
+        $image = $this->productImageModel->find($id);
+
+        if (!$image) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->productImageModel->update($id, [
             'product_id' => $this->request->getPost('product_id'),
             'image'      => $this->request->getPost('image'),
@@ -93,17 +115,23 @@ class ProductImageController extends BaseController
         ]);
 
         return redirect()->to('/admin/product-images')
-            ->with('success', 'Gambar produk berhasil diperbarui.');
+            ->with('success', 'Product image berhasil diperbarui.');
     }
 
     /**
-     * Hapus gambar produk
+     * Delete Product Image
      */
     public function delete($id)
     {
+        $image = $this->productImageModel->find($id);
+
+        if (!$image) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->productImageModel->delete($id);
 
         return redirect()->to('/admin/product-images')
-            ->with('success', 'Gambar produk berhasil dihapus.');
+            ->with('success', 'Product image berhasil dihapus.');
     }
 }

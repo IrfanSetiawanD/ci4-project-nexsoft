@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\BlogCategoryModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class BlogCategoryController extends BaseController
 {
@@ -15,27 +16,30 @@ class BlogCategoryController extends BaseController
     }
 
     /**
-     * Menampilkan semua kategori blog
+     * Display all blog categories
      */
     public function index()
     {
-        $data['categories'] = $this->blogCategoryModel
-            ->orderBy('name', 'ASC')
-            ->findAll();
-
-        return view('admin/blog_categories/index', $data);
+        return view('admin/blog_categories/index', [
+            'title'      => 'Manage Blog Categories',
+            'categories' => $this->blogCategoryModel
+                ->orderBy('name', 'ASC')
+                ->findAll(),
+        ]);
     }
 
     /**
-     * Form tambah kategori blog
+     * Show create form
      */
     public function create()
     {
-        return view('admin/blog_categories/create');
+        return view('admin/blog_categories/create', [
+            'title' => 'Create Blog Category',
+        ]);
     }
 
     /**
-     * Simpan kategori blog
+     * Store blog category
      */
     public function store()
     {
@@ -47,28 +51,37 @@ class BlogCategoryController extends BaseController
         ]);
 
         return redirect()->to('/admin/blog-categories')
-            ->with('success', 'Kategori blog berhasil ditambahkan.');
+            ->with('success', 'Blog category berhasil ditambahkan.');
     }
 
     /**
-     * Form edit kategori blog
+     * Show edit form
      */
     public function edit($id)
     {
-        $data['category'] = $this->blogCategoryModel->find($id);
+        $category = $this->blogCategoryModel->find($id);
 
-        if (!$data['category']) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$category) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        return view('admin/blog_categories/edit', $data);
+        return view('admin/blog_categories/edit', [
+            'title'    => 'Edit Blog Category',
+            'category' => $category,
+        ]);
     }
 
     /**
-     * Update kategori blog
+     * Update blog category
      */
     public function update($id)
     {
+        $category = $this->blogCategoryModel->find($id);
+
+        if (!$category) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->blogCategoryModel->update($id, [
             'name'        => $this->request->getPost('name'),
             'slug'        => url_title($this->request->getPost('name'), '-', true),
@@ -77,17 +90,23 @@ class BlogCategoryController extends BaseController
         ]);
 
         return redirect()->to('/admin/blog-categories')
-            ->with('success', 'Kategori blog berhasil diperbarui.');
+            ->with('success', 'Blog category berhasil diperbarui.');
     }
 
     /**
-     * Hapus kategori blog
+     * Delete blog category
      */
     public function delete($id)
     {
+        $category = $this->blogCategoryModel->find($id);
+
+        if (!$category) {
+            throw PageNotFoundException::forPageNotFound();
+        }
+
         $this->blogCategoryModel->delete($id);
 
         return redirect()->to('/admin/blog-categories')
-            ->with('success', 'Kategori blog berhasil dihapus.');
+            ->with('success', 'Blog category berhasil dihapus.');
     }
 }

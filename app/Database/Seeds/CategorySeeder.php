@@ -11,66 +11,34 @@ class CategorySeeder extends Seeder
         $data = [
 
             [
-                'name'        => 'Productivity',
-                'slug'        => 'productivity',
-                'description' => 'Office productivity software.',
-                'icon'        => 'fa-solid fa-briefcase',
-                'status'      => 'active',
-            ],
-
-            [
-                'name'        => 'Design',
-                'slug'        => 'design',
-                'description' => 'Creative design software.',
-                'icon'        => 'fa-solid fa-palette',
-                'status'      => 'active',
-            ],
-
-            [
-                'name'        => 'PDF Solution',
-                'slug'        => 'pdf-solution',
-                'description' => 'PDF editing and management software.',
-                'icon'        => 'fa-solid fa-file-pdf',
-                'status'      => 'active',
-            ],
-
-            [
-                'name'        => 'Cyber Security',
-                'slug'        => 'cyber-security',
-                'description' => 'Endpoint and network security.',
+                'name'        => 'IT & Security',
+                'slug'        => 'it-security',
+                'description' => 'Cyber security, antivirus, backup, endpoint security, firewall and networking solutions.',
                 'icon'        => 'fa-solid fa-shield-halved',
                 'status'      => 'active',
             ],
 
             [
-                'name'        => 'Cloud',
-                'slug'        => 'cloud',
-                'description' => 'Cloud computing solutions.',
-                'icon'        => 'fa-solid fa-cloud',
+                'name'        => 'Design / Creative',
+                'slug'        => 'design-creative',
+                'description' => 'Graphic design, CAD, video editing, PDF and creative software.',
+                'icon'        => 'fa-solid fa-palette',
                 'status'      => 'active',
             ],
 
             [
-                'name'        => 'Backup & Recovery',
-                'slug'        => 'backup-recovery',
-                'description' => 'Backup and disaster recovery software.',
-                'icon'        => 'fa-solid fa-database',
+                'name'        => 'Desktop & Server OS',
+                'slug'        => 'desktop-server-os',
+                'description' => 'Windows, Windows Server, Linux and virtualization platforms.',
+                'icon'        => 'fa-solid fa-desktop',
                 'status'      => 'active',
             ],
 
             [
-                'name'        => 'Virtualization',
-                'slug'        => 'virtualization',
-                'description' => 'Virtual machine and virtualization solutions.',
-                'icon'        => 'fa-solid fa-server',
-                'status'      => 'active',
-            ],
-
-            [
-                'name'        => 'Developer Tools',
-                'slug'        => 'developer-tools',
-                'description' => 'Software development tools.',
-                'icon'        => 'fa-solid fa-code',
+                'name'        => 'Office & Productivity',
+                'slug'        => 'office-productivity',
+                'description' => 'Microsoft 365, Office, collaboration and productivity software.',
+                'icon'        => 'fa-solid fa-briefcase',
                 'status'      => 'active',
             ],
 

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\BrandModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class BrandController extends BaseController
 {
@@ -15,34 +16,32 @@ class BrandController extends BaseController
     }
 
     /**
-     * Display all brands
+     * Brand List
      */
     public function index()
     {
-        $data = [
-            'title'  => 'Brands',
-            'brands' => $this->brandModel
-                ->orderBy('id', 'DESC')
-                ->findAll(),
-        ];
+        $brands = $this->brandModel
+            ->orderBy('id', 'DESC')
+            ->findAll();
 
-        return view('admin/brands/index', $data);
+        return view('admin/brands/index', [
+            'title'  => 'Manage Brands',
+            'brands' => $brands,
+        ]);
     }
 
     /**
-     * Show create form
+     * Create Form
      */
     public function create()
     {
-        $data = [
-            'title' => 'Add Brand',
-        ];
-
-        return view('admin/brands/create', $data);
+        return view('admin/brands/create', [
+            'title' => 'Create Brand',
+        ]);
     }
 
     /**
-     * Store new brand
+     * Store Brand
      */
     public function store()
     {
@@ -51,7 +50,7 @@ class BrandController extends BaseController
             'slug' => 'required|is_unique[brands.slug]',
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -67,37 +66,35 @@ class BrandController extends BaseController
         ]);
 
         return redirect()->to('/admin/brands')
-            ->with('success', 'Brand created successfully.');
+            ->with('success', 'Brand berhasil ditambahkan.');
     }
 
     /**
-     * Show edit form
+     * Edit Form
      */
     public function edit($id)
     {
         $brand = $this->brandModel->find($id);
 
-        if (! $brand) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$brand) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
-        $data = [
+        return view('admin/brands/edit', [
             'title' => 'Edit Brand',
             'brand' => $brand,
-        ];
-
-        return view('admin/brands/edit', $data);
+        ]);
     }
 
     /**
-     * Update brand
+     * Update Brand
      */
     public function update($id)
     {
         $brand = $this->brandModel->find($id);
 
-        if (! $brand) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$brand) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $rules = [
@@ -105,7 +102,7 @@ class BrandController extends BaseController
             'slug' => "required|is_unique[brands.slug,id,{$id}]",
         ];
 
-        if (! $this->validate($rules)) {
+        if (!$this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
@@ -121,23 +118,23 @@ class BrandController extends BaseController
         ]);
 
         return redirect()->to('/admin/brands')
-            ->with('success', 'Brand updated successfully.');
+            ->with('success', 'Brand berhasil diperbarui.');
     }
 
     /**
-     * Delete brand
+     * Delete Brand
      */
     public function delete($id)
     {
         $brand = $this->brandModel->find($id);
 
-        if (! $brand) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        if (!$brand) {
+            throw PageNotFoundException::forPageNotFound();
         }
 
         $this->brandModel->delete($id);
 
-        return redirect()->back()
-            ->with('success', 'Brand deleted successfully.');
+        return redirect()->to('/admin/brands')
+            ->with('success', 'Brand berhasil dihapus.');
     }
 }
